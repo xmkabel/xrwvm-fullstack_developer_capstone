@@ -13,6 +13,7 @@ from django.contrib.auth import login, authenticate
 import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
+from .restapis import get_request
 # from .populate import initiate
 
 
@@ -84,18 +85,29 @@ def registration(request):
         data = {"userName":username,"error":"Already Registered"}
         return JsonResponse(data)
 
-# # Update the `get_dealerships` view to render the index page with
-# a list of dealerships
-# def get_dealerships(request):
-# ...
+# Update the `get_dealerships` view to render the index page with a list of dealerships
+def get_dealerships(request, state="All"):
+    if state == "All":
+        endpoint = "/fetchDealers"
+    else:
+        endpoint = "/fetchDealers/" + state
+    dealerships = get_request(endpoint)
+    return JsonResponse({"status": 200, "dealers": dealerships})
+
 
 # Create a `get_dealer_reviews` view to render the reviews of a dealer
-# def get_dealer_reviews(request,dealer_id):
-# ...
+def get_dealer_reviews(request, dealer_id):
+    endpoint = "/fetchReviews/dealer/" + str(dealer_id)
+    reviews = get_request(endpoint)
+    return JsonResponse({"status": 200, "reviews": reviews})
+
 
 # Create a `get_dealer_details` view to render the dealer details
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    endpoint = "/fetchDealer/" + str(dealer_id)
+    dealership = get_request(endpoint)
+    return JsonResponse({"status": 200, "dealer": dealership})
+
 
 # Create a `add_review` view to submit a review
 # def add_review(request):
